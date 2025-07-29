@@ -20,6 +20,16 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+# ---- ВСТАВЬ ИНИЦИАЛИЗАЦИЮ ТАБЛИЦЫ СЮДА ----
+def init_db():
+    conn = get_db()
+    cols = ", ".join([f'"{c}" TEXT' for c in COLUMNS])
+    conn.execute(f"CREATE TABLE IF NOT EXISTS zakupki (id INTEGER PRIMARY KEY AUTOINCREMENT, {cols})")
+    conn.commit()
+    conn.close()
+
+init_db()  # <---- вызывется ОДИН раз при старте приложения
+
 @app.route("/api/zakupki", methods=["GET"])
 def get_zakupki():
     conn = get_db()
@@ -69,14 +79,6 @@ def upload_file():
 @app.route("/uploads/<filename>")
 def serve_upload(filename):
     return send_from_directory(UPLOAD_DIR, filename)
-
-@app.before_first_request
-def init_db():
-    conn = get_db()
-    cols = ", ".join([f'"{c}" TEXT' for c in COLUMNS])
-    conn.execute(f"CREATE TABLE IF NOT EXISTS zakupki (id INTEGER PRIMARY KEY AUTOINCREMENT, {cols})")
-    conn.commit()
-    conn.close()
 
 if __name__ == "__main__":
     app.run(debug=True)
