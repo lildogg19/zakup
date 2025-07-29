@@ -33,7 +33,7 @@ init_db()  # <---- вызывется ОДИН раз при старте при
 @app.route("/api/zakupki", methods=["GET"])
 def get_zakupki():
     conn = get_db()
-    rows = conn.execute("SELECT rowid, * FROM zakupki").fetchall()
+    rows = conn.execute("SELECT id as rowid, * FROM zakupki").fetchall()
     result = [dict(row) for row in rows]
     conn.close()
     return jsonify(result)
